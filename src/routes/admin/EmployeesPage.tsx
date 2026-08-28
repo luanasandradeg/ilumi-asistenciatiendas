@@ -8,6 +8,7 @@ const emptyForm = { email: '', full_name: '', employee_code: '', store_id: '', r
 const ROLE_LABEL: Record<string, string> = {
   employee: 'Empleado',
   manager: 'Líder',
+  admin: 'Administrador',
 }
 
 export default function EmployeesPage() {
@@ -34,7 +35,7 @@ export default function EmployeesPage() {
       supabase
         .from('profiles')
         .select('id, full_name, role, store_id, employee_code, active, created_at')
-        .in('role', ['employee', 'manager'])
+        .in('role', ['employee', 'manager', 'admin'])
         .order('full_name'),
       supabase.from('stores').select('*').order('name'),
     ])
@@ -188,6 +189,20 @@ export default function EmployeesPage() {
             </div>
             {isAdmin && (
               <div>
+                <label className="mb-1 block text-sm font-medium text-brand-dark">Rol</label>
+                <select
+                  value={form.role}
+                  onChange={(e) => setForm({ ...form, role: e.target.value, store_id: '' })}
+                  className="w-full rounded-lg border border-brand-dark/20 px-3 py-2 focus:border-brand-navy focus:outline-none"
+                >
+                  <option value="employee">Empleado</option>
+                  <option value="manager">Líder</option>
+                  <option value="admin">Administrador</option>
+                </select>
+              </div>
+            )}
+            {isAdmin && form.role !== 'admin' && (
+              <div>
                 <label className="mb-1 block text-sm font-medium text-brand-dark">Local</label>
                 <select
                   required
@@ -201,19 +216,6 @@ export default function EmployeesPage() {
                       {s.name}
                     </option>
                   ))}
-                </select>
-              </div>
-            )}
-            {isAdmin && (
-              <div>
-                <label className="mb-1 block text-sm font-medium text-brand-dark">Rol</label>
-                <select
-                  value={form.role}
-                  onChange={(e) => setForm({ ...form, role: e.target.value })}
-                  className="w-full rounded-lg border border-brand-dark/20 px-3 py-2 focus:border-brand-navy focus:outline-none"
-                >
-                  <option value="employee">Empleado</option>
-                  <option value="manager">Líder</option>
                 </select>
               </div>
             )}
@@ -264,17 +266,21 @@ export default function EmployeesPage() {
                     <td className="px-4 py-3 text-brand-dark/70">{emp.employee_code ?? '—'}</td>
                     {isAdmin && (
                       <td className="px-4 py-3">
-                        <select
-                          value={emp.store_id ?? ''}
-                          onChange={(e) => updateStore(emp, e.target.value)}
-                          className="rounded-lg border border-brand-dark/20 px-2 py-1 text-sm"
-                        >
-                          {stores.map((s) => (
-                            <option key={s.id} value={s.id}>
-                              {s.name}
-                            </option>
-                          ))}
-                        </select>
+                        {emp.role === 'admin' ? (
+                          <span className="text-brand-dark/40">—</span>
+                        ) : (
+                          <select
+                            value={emp.store_id ?? ''}
+                            onChange={(e) => updateStore(emp, e.target.value)}
+                            className="rounded-lg border border-brand-dark/20 px-2 py-1 text-sm"
+                          >
+                            {stores.map((s) => (
+                              <option key={s.id} value={s.id}>
+                                {s.name}
+                              </option>
+                            ))}
+                          </select>
+                        )}
                       </td>
                     )}
                     <td className="px-4 py-3">

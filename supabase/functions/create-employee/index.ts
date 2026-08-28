@@ -3,7 +3,7 @@
 // crear usuarios de Auth requiere privilegios que el anon key no tiene.
 // Solo admin o manager pueden invocarla; un manager solo puede crear
 // empleados (rol 'employee') en su propio local. Solo el admin puede
-// crear cuentas con rol 'manager' (líder).
+// crear cuentas con rol 'manager' (líder) o 'admin'.
 //
 // Deploy: supabase functions deploy create-employee
 // Requiere los secrets SUPABASE_URL y SUPABASE_SERVICE_ROLE_KEY (Supabase
@@ -71,7 +71,7 @@ Deno.serve(async (req) => {
     const full_name = String(body.full_name ?? '').trim()
     const employee_code = body.employee_code ? String(body.employee_code).trim() : null
     let store_id = body.store_id ? String(body.store_id) : null
-    const requestedRole = body.role === 'manager' ? 'manager' : 'employee'
+    const requestedRole = ['manager', 'admin'].includes(body.role) ? body.role : 'employee'
 
     if (!email || !full_name) {
       return new Response(JSON.stringify({ error: 'Faltan email o nombre' }), {
@@ -80,8 +80,8 @@ Deno.serve(async (req) => {
       })
     }
 
-    if (requestedRole === 'manager' && caller.role !== 'admin') {
-      return new Response(JSON.stringify({ error: 'Solo el admin puede crear líderes' }), {
+    if ((requestedRole === 'manager' || requestedRole === 'admin') && caller.role !== 'admin') {
+      return new Response(JSON.stringify({ error: 'Solo el admin puede crear líderes o administradores' }), {
         status: 403,
         headers: { ...corsHeaders, 'Content-Type': 'application/json' },
       })
@@ -90,7 +90,9 @@ Deno.serve(async (req) => {
     if (caller.role === 'manager') {
       store_id = caller.store_id
     }
-    if (!store_id) {
+    if (requestedRole === 'admin') {
+      store_id = null
+    } else if (!store_id) {
       return new Response(JSON.stringify({ error: 'Falta el local' }), {
         status: 400,
         headers: { ...corsHeaders, 'Content-Type': 'application/json' },

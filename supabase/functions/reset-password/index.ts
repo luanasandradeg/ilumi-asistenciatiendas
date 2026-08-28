@@ -1,7 +1,8 @@
-// Edge Function: cambia la contraseña de un empleado/líder que ya existe.
+// Edge Function: cambia la contraseña de una cuenta que ya existe.
 // Si el body trae `new_password` se usa esa (mínimo 6 caracteres); si no,
 // se genera una aleatoria. Misma lógica de autorización que create-employee:
-// admin o manager (el manager solo puede resetear empleados de su propio local).
+// admin (sin restricción de rol/local) o manager (solo empleados de su
+// propio local).
 //
 // Deploy: supabase functions deploy reset-password
 
@@ -68,8 +69,6 @@ Deno.serve(async (req) => {
       if (target.role !== 'employee' || target.store_id !== caller.store_id) {
         return json({ error: 'No autorizado' }, 403)
       }
-    } else if (target.role === 'admin') {
-      return json({ error: 'No se puede resetear la contraseña de otro admin' }, 403)
     }
 
     const customPassword = body.new_password ? String(body.new_password) : null
