@@ -1,4 +1,4 @@
-import { FormEvent, useEffect, useState } from 'react'
+import { Fragment, FormEvent, useEffect, useState } from 'react'
 import { supabase } from '../../lib/supabaseClient'
 import { useAuth } from '../../contexts/AuthContext'
 import type { Profile, Store } from '../../types/database'
@@ -24,6 +24,9 @@ export default function EmployeesPage() {
   const [lastCreated, setLastCreated] = useState<{ email: string; temp_password: string } | null>(null)
   const [lastReset, setLastReset] = useState<{ full_name: string; temp_password: string } | null>(null)
   const [resettingId, setResettingId] = useState<string | null>(null)
+  const [resetTarget, setResetTarget] = useState<Profile | null>(null)
+  const [customPassword, setCustomPassword] = useState('')
+  const [resetError, setResetError] = useState<string | null>(null)
 
   async function load() {
     setLoading(true)
@@ -86,23 +89,38 @@ export default function EmployeesPage() {
     load()
   }
 
-  async function handleResetPassword(emp: Profile) {
-    setResettingId(emp.id)
+  function openReset(emp: Profile) {
+    setResetTarget(emp)
+    setCustomPassword('')
+    setResetError(null)
     setLastReset(null)
     setLastCreated(null)
+  }
+
+  async function confirmReset(emp: Profile, useCustom: boolean) {
+    if (useCustom && customPassword.trim().length < 6) {
+      setResetError('La contraseña debe tener al menos 6 caracteres.')
+      return
+    }
+    setResettingId(emp.id)
+    setResetError(null)
     const { data, error } = await supabase.functions.invoke('reset-password', {
-      body: { employee_id: emp.id },
+      body: {
+        employee_id: emp.id,
+        new_password: useCustom ? customPassword.trim() : undefined,
+      },
     })
     setResettingId(null)
     if (error) {
-      setError(error.message)
+      setResetError(error.message)
       return
     }
     if (data?.error) {
-      setError(data.error)
+      setResetError(data.error)
       return
     }
     setLastReset({ full_name: emp.full_name, temp_password: data.temp_password })
+    setResetTarget(null)
   }
 
   return (
@@ -239,51 +257,88 @@ export default function EmployeesPage() {
             </thead>
             <tbody>
               {employees.map((emp) => (
-                <tr key={emp.id} className="border-b border-brand-dark/5 last:border-0">
-                  <td className="px-4 py-3 font-medium text-brand-dark">{emp.full_name}</td>
-                  <td className="px-4 py-3 text-brand-dark/70">{ROLE_LABEL[emp.role] ?? emp.role}</td>
-                  <td className="px-4 py-3 text-brand-dark/70">{emp.employee_code ?? '—'}</td>
-                  {isAdmin && (
-                    <td className="px-4 py-3">
-                      <select
-                        value={emp.store_id ?? ''}
-                        onChange={(e) => updateStore(emp, e.target.value)}
-                        className="rounded-lg border border-brand-dark/20 px-2 py-1 text-sm"
-                      >
-                        {stores.map((s) => (
-                          <option key={s.id} value={s.id}>
-                            {s.name}
-                          </option>
-                        ))}
-                      </select>
-                    </td>
-                  )}
-                  <td className="px-4 py-3">
-                    <span
-                      className={`rounded-full px-2 py-1 text-xs font-medium ${
-                        emp.active ? 'bg-brand-gold/20 text-brand-navy' : 'bg-brand-dark/10 text-brand-dark/60'
-                      }`}
-                    >
-                      {emp.active ? 'Activo' : 'Inactivo'}
-                    </span>
-                  </td>
-                  <td className="px-4 py-3 text-right">
-                    {(isAdmin || emp.role === 'employee') && (
-                      <div className="flex justify-end gap-3">
-                        <button
-                          onClick={() => handleResetPassword(emp)}
-                          disabled={resettingId === emp.id}
-                          className="text-brand-blue disabled:opacity-50"
+                <Fragment key={emp.id}>
+                  <tr className="border-b border-brand-dark/5 last:border-0">
+                    <td className="px-4 py-3 font-medium text-brand-dark">{emp.full_name}</td>
+                    <td className="px-4 py-3 text-brand-dark/70">{ROLE_LABEL[emp.role] ?? emp.role}</td>
+                    <td className="px-4 py-3 text-brand-dark/70">{emp.employee_code ?? '—'}</td>
+                    {isAdmin && (
+                      <td className="px-4 py-3">
+                        <select
+                          value={emp.store_id ?? ''}
+                          onChange={(e) => updateStore(emp, e.target.value)}
+                          className="rounded-lg border border-brand-dark/20 px-2 py-1 text-sm"
                         >
-                          {resettingId === emp.id ? 'Reseteando…' : 'Resetear contraseña'}
-                        </button>
-                        <button onClick={() => toggleActive(emp)} className="text-brand-blue">
-                          {emp.active ? 'Desactivar' : 'Reactivar'}
-                        </button>
-                      </div>
+                          {stores.map((s) => (
+                            <option key={s.id} value={s.id}>
+                              {s.name}
+                            </option>
+                          ))}
+                        </select>
+                      </td>
                     )}
-                  </td>
-                </tr>
+                    <td className="px-4 py-3">
+                      <span
+                        className={`rounded-full px-2 py-1 text-xs font-medium ${
+                          emp.active ? 'bg-brand-gold/20 text-brand-navy' : 'bg-brand-dark/10 text-brand-dark/60'
+                        }`}
+                      >
+                        {emp.active ? 'Activo' : 'Inactivo'}
+                      </span>
+                    </td>
+                    <td className="px-4 py-3 text-right">
+                      {(isAdmin || emp.role === 'employee') && (
+                        <div className="flex justify-end gap-3">
+                          <button
+                            onClick={() => (resetTarget?.id === emp.id ? setResetTarget(null) : openReset(emp))}
+                            className="text-brand-blue"
+                          >
+                            Resetear contraseña
+                          </button>
+                          <button onClick={() => toggleActive(emp)} className="text-brand-blue">
+                            {emp.active ? 'Desactivar' : 'Reactivar'}
+                          </button>
+                        </div>
+                      )}
+                    </td>
+                  </tr>
+                  {resetTarget?.id === emp.id && (
+                    <tr className="border-b border-brand-dark/5 bg-brand-navy/5 last:border-0">
+                      <td colSpan={isAdmin ? 6 : 5} className="px-4 py-3">
+                        <div className="flex flex-wrap items-center gap-2">
+                          <input
+                            type="text"
+                            placeholder="Nueva contraseña (mín. 6 caracteres)"
+                            value={customPassword}
+                            onChange={(e) => setCustomPassword(e.target.value)}
+                            className="rounded-lg border border-brand-dark/20 px-3 py-1.5 text-sm focus:border-brand-navy focus:outline-none"
+                          />
+                          <button
+                            onClick={() => confirmReset(emp, true)}
+                            disabled={resettingId === emp.id}
+                            className="rounded-lg bg-brand-navy px-3 py-1.5 text-sm font-medium text-white hover:bg-brand-blue disabled:opacity-50"
+                          >
+                            Usar esta contraseña
+                          </button>
+                          <button
+                            onClick={() => confirmReset(emp, false)}
+                            disabled={resettingId === emp.id}
+                            className="rounded-lg bg-brand-dark/5 px-3 py-1.5 text-sm font-medium text-brand-dark disabled:opacity-50"
+                          >
+                            {resettingId === emp.id ? 'Generando…' : 'Generar automática'}
+                          </button>
+                          <button
+                            onClick={() => setResetTarget(null)}
+                            className="text-sm font-medium text-brand-dark/60"
+                          >
+                            Cancelar
+                          </button>
+                        </div>
+                        {resetError && <p className="mt-2 text-sm font-medium text-black">{resetError}</p>}
+                      </td>
+                    </tr>
+                  )}
+                </Fragment>
               ))}
             </tbody>
           </table>

@@ -1,7 +1,7 @@
-// Edge Function: genera una nueva contraseña temporal para un empleado/líder
-// que ya existe (para cuando se perdió la que se mostró al crear la cuenta).
-// Misma lógica de autorización que create-employee: admin o manager (el
-// manager solo puede resetear empleados de su propio local).
+// Edge Function: cambia la contraseña de un empleado/líder que ya existe.
+// Si el body trae `new_password` se usa esa (mínimo 6 caracteres); si no,
+// se genera una aleatoria. Misma lógica de autorización que create-employee:
+// admin o manager (el manager solo puede resetear empleados de su propio local).
 //
 // Deploy: supabase functions deploy reset-password
 
@@ -72,7 +72,11 @@ Deno.serve(async (req) => {
       return json({ error: 'No se puede resetear la contraseña de otro admin' }, 403)
     }
 
-    const password = randomPassword()
+    const customPassword = body.new_password ? String(body.new_password) : null
+    if (customPassword && customPassword.length < 6) {
+      return json({ error: 'La contraseña debe tener al menos 6 caracteres' }, 400)
+    }
+    const password = customPassword ?? randomPassword()
     const { error: updateErr } = await admin.auth.admin.updateUserById(employee_id, { password })
     if (updateErr) return json({ error: updateErr.message }, 400)
 
