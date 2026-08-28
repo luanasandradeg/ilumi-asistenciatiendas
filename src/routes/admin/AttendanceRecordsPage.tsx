@@ -45,7 +45,7 @@ export default function AttendanceRecordsPage() {
     supabase
       .from('profiles')
       .select('*')
-      .eq('role', 'employee')
+      .in('role', ['employee', 'manager'])
       .order('full_name')
       .then(({ data }) => data && setEmployees(data as Profile[]))
     supabase

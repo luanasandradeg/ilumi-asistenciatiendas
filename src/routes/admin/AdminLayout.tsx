@@ -17,14 +17,19 @@ export default function AdminLayout() {
           <div>
             <h1 className="text-lg font-semibold text-brand-navy">Panel de asistencia</h1>
             <p className="text-xs text-brand-dark/60">
-              {profile?.full_name} · {isAdmin ? 'Administrador' : 'Encargado de local'}
+              {profile?.full_name} · {isAdmin ? 'Administrador' : 'Líder'}
             </p>
           </div>
           <button onClick={() => signOut()} className="text-sm font-medium text-brand-dark/60 underline">
-            Salir
+            Cerrar sesión
           </button>
         </div>
         <nav className="mx-auto mt-4 flex max-w-5xl gap-2 overflow-x-auto">
+          {!isAdmin && (
+            <NavLink to="/admin/asistencia" className={linkClass}>
+              Marcar asistencia
+            </NavLink>
+          )}
           <NavLink to="/admin/empleados" className={linkClass}>
             Empleados
           </NavLink>

@@ -3,6 +3,18 @@ import { supabase } from '../../lib/supabaseClient'
 import { getCurrentPosition } from '../../utils/geo'
 import type { Store } from '../../types/database'
 
+const FALLBACK_TIMEZONES = ['America/Santiago', 'America/Lima', 'America/Bogota', 'America/Mexico_City', 'UTC']
+
+function getTimezones(): string[] {
+  try {
+    return typeof Intl.supportedValuesOf === 'function' ? Intl.supportedValuesOf('timeZone') : FALLBACK_TIMEZONES
+  } catch {
+    return FALLBACK_TIMEZONES
+  }
+}
+
+const TIMEZONES = getTimezones()
+
 const emptyForm = {
   id: '',
   name: '',
@@ -161,13 +173,18 @@ export default function StoresPage() {
             </div>
             <div>
               <label className="mb-1 block text-sm font-medium text-brand-dark">Zona horaria</label>
-              <input
+              <select
                 required
                 value={form.timezone}
                 onChange={(e) => setForm({ ...form, timezone: e.target.value })}
-                placeholder="America/Santiago"
                 className="w-full rounded-lg border border-brand-dark/20 px-3 py-2 focus:border-brand-navy focus:outline-none"
-              />
+              >
+                {TIMEZONES.map((tz) => (
+                  <option key={tz} value={tz}>
+                    {tz}
+                  </option>
+                ))}
+              </select>
             </div>
           </div>
 

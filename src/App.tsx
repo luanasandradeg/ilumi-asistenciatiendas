@@ -8,13 +8,22 @@ import EmployeesPage from './routes/admin/EmployeesPage'
 import StoresPage from './routes/admin/StoresPage'
 import SchedulesPage from './routes/admin/SchedulesPage'
 import AttendanceRecordsPage from './routes/admin/AttendanceRecordsPage'
+import MyAttendancePage from './routes/admin/MyAttendancePage'
 
 function Home() {
   const { profile } = useAuth()
-  if (profile?.role === 'admin' || profile?.role === 'manager') {
+  if (profile?.role === 'admin') {
     return <Navigate to="/admin/empleados" replace />
   }
+  if (profile?.role === 'manager') {
+    return <Navigate to="/admin/asistencia" replace />
+  }
   return <EmployeeCheckIn />
+}
+
+function AdminIndex() {
+  const { profile } = useAuth()
+  return <Navigate to={profile?.role === 'manager' ? 'asistencia' : 'empleados'} replace />
 }
 
 export default function App() {
@@ -30,7 +39,8 @@ export default function App() {
 
           <Route element={<ProtectedRoute allowedRoles={['admin', 'manager']} />}>
             <Route path="/admin" element={<AdminLayout />}>
-              <Route index element={<Navigate to="empleados" replace />} />
+              <Route index element={<AdminIndex />} />
+              <Route path="asistencia" element={<MyAttendancePage />} />
               <Route path="empleados" element={<EmployeesPage />} />
               <Route path="horarios" element={<SchedulesPage />} />
               <Route path="registros" element={<AttendanceRecordsPage />} />

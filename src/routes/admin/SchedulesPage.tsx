@@ -27,7 +27,7 @@ export default function SchedulesPage() {
     supabase
       .from('profiles')
       .select('*')
-      .eq('role', 'employee')
+      .in('role', ['employee', 'manager'])
       .order('full_name')
       .then(({ data }) => {
         if (data) setEmployees(data as Profile[])

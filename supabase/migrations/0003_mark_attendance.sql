@@ -73,11 +73,13 @@ begin
   if found then
     v_expected := case when p_type = 'entrada' then v_schedule.expected_start else v_schedule.expected_end end;
     v_variance := extract(epoch from (v_local_ts::time - v_expected)) / 60.0;
-    v_status := case
-      when abs(v_variance) <= 5 then 'on_time'
-      when v_variance > 5 then 'late'
-      else 'early'
-    end;
+    -- Entrada: solo puede quedar "a horario" o "tarde" (llegar antes no se marca).
+    -- Salida: solo puede quedar "a horario" o "temprano" (irse después no se marca).
+    if p_type = 'entrada' then
+      v_status := case when v_variance > 5 then 'late' else 'on_time' end;
+    else
+      v_status := case when v_variance < -5 then 'early' else 'on_time' end;
+    end if;
   else
     v_expected := null;
     v_variance := null;

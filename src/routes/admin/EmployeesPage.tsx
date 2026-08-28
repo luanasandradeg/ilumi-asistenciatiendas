@@ -3,7 +3,12 @@ import { supabase } from '../../lib/supabaseClient'
 import { useAuth } from '../../contexts/AuthContext'
 import type { Profile, Store } from '../../types/database'
 
-const emptyForm = { email: '', full_name: '', employee_code: '', store_id: '' }
+const emptyForm = { email: '', full_name: '', employee_code: '', store_id: '', role: 'employee' }
+
+const ROLE_LABEL: Record<string, string> = {
+  employee: 'Empleado',
+  manager: 'Líder',
+}
 
 export default function EmployeesPage() {
   const { profile } = useAuth()
@@ -21,7 +26,7 @@ export default function EmployeesPage() {
   async function load() {
     setLoading(true)
     const [{ data: emps }, { data: sts }] = await Promise.all([
-      supabase.from('profiles').select('*').eq('role', 'employee').order('full_name'),
+      supabase.from('profiles').select('*').in('role', ['employee', 'manager']).order('full_name'),
       supabase.from('stores').select('*').order('name'),
     ])
     if (emps) setEmployees(emps as Profile[])
@@ -45,6 +50,7 @@ export default function EmployeesPage() {
         full_name: form.full_name.trim(),
         employee_code: form.employee_code.trim() || null,
         store_id: isAdmin ? form.store_id : undefined,
+        role: isAdmin ? form.role : undefined,
       },
     })
 
@@ -147,6 +153,19 @@ export default function EmployeesPage() {
                 </select>
               </div>
             )}
+            {isAdmin && (
+              <div>
+                <label className="mb-1 block text-sm font-medium text-brand-dark">Rol</label>
+                <select
+                  value={form.role}
+                  onChange={(e) => setForm({ ...form, role: e.target.value })}
+                  className="w-full rounded-lg border border-brand-dark/20 px-3 py-2 focus:border-brand-navy focus:outline-none"
+                >
+                  <option value="employee">Empleado</option>
+                  <option value="manager">Líder</option>
+                </select>
+              </div>
+            )}
           </div>
 
           {error && <p className="mt-3 text-sm font-medium text-black">{error}</p>}
@@ -178,6 +197,7 @@ export default function EmployeesPage() {
             <thead>
               <tr className="border-b border-brand-dark/10 text-left text-brand-dark/60">
                 <th className="px-4 py-3">Nombre</th>
+                <th className="px-4 py-3">Rol</th>
                 <th className="px-4 py-3">Código</th>
                 {isAdmin && <th className="px-4 py-3">Local</th>}
                 <th className="px-4 py-3">Estado</th>
@@ -188,6 +208,7 @@ export default function EmployeesPage() {
               {employees.map((emp) => (
                 <tr key={emp.id} className="border-b border-brand-dark/5 last:border-0">
                   <td className="px-4 py-3 font-medium text-brand-dark">{emp.full_name}</td>
+                  <td className="px-4 py-3 text-brand-dark/70">{ROLE_LABEL[emp.role] ?? emp.role}</td>
                   <td className="px-4 py-3 text-brand-dark/70">{emp.employee_code ?? '—'}</td>
                   {isAdmin && (
                     <td className="px-4 py-3">
@@ -214,9 +235,11 @@ export default function EmployeesPage() {
                     </span>
                   </td>
                   <td className="px-4 py-3 text-right">
-                    <button onClick={() => toggleActive(emp)} className="text-brand-blue">
-                      {emp.active ? 'Desactivar' : 'Reactivar'}
-                    </button>
+                    {(isAdmin || emp.role === 'employee') && (
+                      <button onClick={() => toggleActive(emp)} className="text-brand-blue">
+                        {emp.active ? 'Desactivar' : 'Reactivar'}
+                      </button>
+                    )}
                   </td>
                 </tr>
               ))}

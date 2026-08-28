@@ -2,7 +2,8 @@
 // Se ejecuta con la service role key (nunca expuesta al navegador) porque
 // crear usuarios de Auth requiere privilegios que el anon key no tiene.
 // Solo admin o manager pueden invocarla; un manager solo puede crear
-// empleados en su propio local.
+// empleados (rol 'employee') en su propio local. Solo el admin puede
+// crear cuentas con rol 'manager' (líder).
 //
 // Deploy: supabase functions deploy create-employee
 // Requiere los secrets SUPABASE_URL y SUPABASE_SERVICE_ROLE_KEY (Supabase
@@ -66,10 +67,18 @@ Deno.serve(async (req) => {
     const full_name = String(body.full_name ?? '').trim()
     const employee_code = body.employee_code ? String(body.employee_code).trim() : null
     let store_id = body.store_id ? String(body.store_id) : null
+    const requestedRole = body.role === 'manager' ? 'manager' : 'employee'
 
     if (!email || !full_name) {
       return new Response(JSON.stringify({ error: 'Faltan email o nombre' }), {
         status: 400,
+        headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+      })
+    }
+
+    if (requestedRole === 'manager' && caller.role !== 'admin') {
+      return new Response(JSON.stringify({ error: 'Solo el admin puede crear líderes' }), {
+        status: 403,
         headers: { ...corsHeaders, 'Content-Type': 'application/json' },
       })
     }
@@ -103,7 +112,7 @@ Deno.serve(async (req) => {
     const { error: profileErr } = await admin.from('profiles').insert({
       id: created.user.id,
       full_name,
-      role: 'employee',
+      role: requestedRole,
       store_id,
       employee_code,
       active: true,
