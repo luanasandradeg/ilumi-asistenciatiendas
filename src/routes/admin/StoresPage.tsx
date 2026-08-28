@@ -95,11 +95,11 @@ export default function StoresPage() {
   return (
     <div>
       <div className="mb-4 flex items-center justify-between">
-        <h2 className="text-lg font-semibold text-gray-900">Locales</h2>
+        <h2 className="text-lg font-semibold text-brand-navy">Locales</h2>
         {!editing && (
           <button
             onClick={startCreate}
-            className="rounded-lg bg-gray-900 px-4 py-2 text-sm font-medium text-white"
+            className="rounded-lg bg-brand-navy px-4 py-2 text-sm font-medium text-white hover:bg-brand-blue"
           >
             Nuevo local
           </button>
@@ -110,63 +110,63 @@ export default function StoresPage() {
         <form onSubmit={handleSubmit} className="mb-6 rounded-2xl bg-white p-4 shadow-sm">
           <div className="grid gap-3 sm:grid-cols-2">
             <div>
-              <label className="mb-1 block text-sm font-medium text-gray-700">Nombre</label>
+              <label className="mb-1 block text-sm font-medium text-brand-dark">Nombre</label>
               <input
                 required
                 value={form.name}
                 onChange={(e) => setForm({ ...form, name: e.target.value })}
-                className="w-full rounded-lg border border-gray-300 px-3 py-2"
+                className="w-full rounded-lg border border-brand-dark/20 px-3 py-2 focus:border-brand-navy focus:outline-none"
               />
             </div>
             <div>
-              <label className="mb-1 block text-sm font-medium text-gray-700">Dirección</label>
+              <label className="mb-1 block text-sm font-medium text-brand-dark">Dirección</label>
               <input
                 value={form.address}
                 onChange={(e) => setForm({ ...form, address: e.target.value })}
-                className="w-full rounded-lg border border-gray-300 px-3 py-2"
+                className="w-full rounded-lg border border-brand-dark/20 px-3 py-2 focus:border-brand-navy focus:outline-none"
               />
             </div>
             <div>
-              <label className="mb-1 block text-sm font-medium text-gray-700">Latitud</label>
+              <label className="mb-1 block text-sm font-medium text-brand-dark">Latitud</label>
               <input
                 required
                 type="number"
                 step="any"
                 value={form.latitude}
                 onChange={(e) => setForm({ ...form, latitude: e.target.value })}
-                className="w-full rounded-lg border border-gray-300 px-3 py-2"
+                className="w-full rounded-lg border border-brand-dark/20 px-3 py-2 focus:border-brand-navy focus:outline-none"
               />
             </div>
             <div>
-              <label className="mb-1 block text-sm font-medium text-gray-700">Longitud</label>
+              <label className="mb-1 block text-sm font-medium text-brand-dark">Longitud</label>
               <input
                 required
                 type="number"
                 step="any"
                 value={form.longitude}
                 onChange={(e) => setForm({ ...form, longitude: e.target.value })}
-                className="w-full rounded-lg border border-gray-300 px-3 py-2"
+                className="w-full rounded-lg border border-brand-dark/20 px-3 py-2 focus:border-brand-navy focus:outline-none"
               />
             </div>
             <div>
-              <label className="mb-1 block text-sm font-medium text-gray-700">Radio permitido (m)</label>
+              <label className="mb-1 block text-sm font-medium text-brand-dark">Radio permitido (m)</label>
               <input
                 required
                 type="number"
                 min="1"
                 value={form.radius_meters}
                 onChange={(e) => setForm({ ...form, radius_meters: e.target.value })}
-                className="w-full rounded-lg border border-gray-300 px-3 py-2"
+                className="w-full rounded-lg border border-brand-dark/20 px-3 py-2 focus:border-brand-navy focus:outline-none"
               />
             </div>
             <div>
-              <label className="mb-1 block text-sm font-medium text-gray-700">Zona horaria</label>
+              <label className="mb-1 block text-sm font-medium text-brand-dark">Zona horaria</label>
               <input
                 required
                 value={form.timezone}
                 onChange={(e) => setForm({ ...form, timezone: e.target.value })}
                 placeholder="America/Santiago"
-                className="w-full rounded-lg border border-gray-300 px-3 py-2"
+                className="w-full rounded-lg border border-brand-dark/20 px-3 py-2 focus:border-brand-navy focus:outline-none"
               />
             </div>
           </div>
@@ -175,25 +175,25 @@ export default function StoresPage() {
             type="button"
             onClick={useMyLocation}
             disabled={locating}
-            className="mt-3 text-sm font-medium text-blue-600 disabled:opacity-50"
+            className="mt-3 text-sm font-medium text-brand-blue disabled:opacity-50"
           >
             {locating ? 'Obteniendo ubicación…' : 'Usar mi ubicación actual'}
           </button>
 
-          {error && <p className="mt-3 text-sm text-red-600">{error}</p>}
+          {error && <p className="mt-3 text-sm font-medium text-black">{error}</p>}
 
           <div className="mt-4 flex gap-2">
             <button
               type="submit"
               disabled={saving}
-              className="rounded-lg bg-gray-900 px-4 py-2 text-sm font-medium text-white disabled:opacity-50"
+              className="rounded-lg bg-brand-navy px-4 py-2 text-sm font-medium text-white hover:bg-brand-blue disabled:opacity-50"
             >
               {saving ? 'Guardando…' : 'Guardar'}
             </button>
             <button
               type="button"
               onClick={() => setEditing(false)}
-              className="rounded-lg bg-gray-100 px-4 py-2 text-sm font-medium text-gray-700"
+              className="rounded-lg bg-brand-dark/5 px-4 py-2 text-sm font-medium text-brand-dark"
             >
               Cancelar
             </button>
@@ -202,12 +202,12 @@ export default function StoresPage() {
       )}
 
       {loading ? (
-        <p className="text-sm text-gray-400">Cargando…</p>
+        <p className="text-sm text-brand-dark/50">Cargando…</p>
       ) : (
         <div className="overflow-x-auto rounded-2xl bg-white shadow-sm">
           <table className="w-full text-sm">
             <thead>
-              <tr className="border-b border-gray-100 text-left text-gray-500">
+              <tr className="border-b border-brand-dark/10 text-left text-brand-dark/60">
                 <th className="px-4 py-3">Nombre</th>
                 <th className="px-4 py-3">Dirección</th>
                 <th className="px-4 py-3">Radio</th>
@@ -217,13 +217,13 @@ export default function StoresPage() {
             </thead>
             <tbody>
               {stores.map((s) => (
-                <tr key={s.id} className="border-b border-gray-50 last:border-0">
-                  <td className="px-4 py-3 font-medium text-gray-900">{s.name}</td>
-                  <td className="px-4 py-3 text-gray-600">{s.address ?? '—'}</td>
-                  <td className="px-4 py-3 text-gray-600">{s.radius_meters} m</td>
-                  <td className="px-4 py-3 text-gray-600">{s.timezone}</td>
+                <tr key={s.id} className="border-b border-brand-dark/5 last:border-0">
+                  <td className="px-4 py-3 font-medium text-brand-dark">{s.name}</td>
+                  <td className="px-4 py-3 text-brand-dark/70">{s.address ?? '—'}</td>
+                  <td className="px-4 py-3 text-brand-dark/70">{s.radius_meters} m</td>
+                  <td className="px-4 py-3 text-brand-dark/70">{s.timezone}</td>
                   <td className="px-4 py-3 text-right">
-                    <button onClick={() => startEdit(s)} className="text-blue-600">
+                    <button onClick={() => startEdit(s)} className="text-brand-blue">
                       Editar
                     </button>
                   </td>

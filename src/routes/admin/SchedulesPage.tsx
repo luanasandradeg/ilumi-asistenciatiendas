@@ -94,14 +94,14 @@ export default function SchedulesPage() {
 
   return (
     <div>
-      <h2 className="mb-4 text-lg font-semibold text-gray-900">Horarios</h2>
+      <h2 className="mb-4 text-lg font-semibold text-brand-navy">Horarios</h2>
 
       <div className="mb-4 max-w-xs">
-        <label className="mb-1 block text-sm font-medium text-gray-700">Empleado</label>
+        <label className="mb-1 block text-sm font-medium text-brand-dark">Empleado</label>
         <select
           value={selected}
           onChange={(e) => setSelected(e.target.value)}
-          className="w-full rounded-lg border border-gray-300 px-3 py-2"
+          className="w-full rounded-lg border border-brand-dark/20 px-3 py-2 focus:border-brand-navy focus:outline-none"
         >
           <option value="">Seleccionar…</option>
           {employees.map((e) => (
@@ -116,8 +116,8 @@ export default function SchedulesPage() {
         <div className="rounded-2xl bg-white p-4 shadow-sm">
           <div className="space-y-2">
             {DAYS.map((label, i) => (
-              <div key={label} className="flex flex-wrap items-center gap-3 border-b border-gray-50 py-2 last:border-0">
-                <label className="flex w-36 items-center gap-2 text-sm font-medium text-gray-700">
+              <div key={label} className="flex flex-wrap items-center gap-3 border-b border-brand-dark/5 py-2 last:border-0">
+                <label className="flex w-36 items-center gap-2 text-sm font-medium text-brand-dark">
                   <input
                     type="checkbox"
                     checked={days[i].works}
@@ -130,26 +130,26 @@ export default function SchedulesPage() {
                   disabled={!days[i].works}
                   value={days[i].start}
                   onChange={(e) => updateDay(i, { start: e.target.value })}
-                  className="rounded-lg border border-gray-300 px-2 py-1 text-sm disabled:opacity-40"
+                  className="rounded-lg border border-brand-dark/20 px-2 py-1 text-sm disabled:opacity-40"
                 />
-                <span className="text-gray-400">a</span>
+                <span className="text-brand-dark/50">a</span>
                 <input
                   type="time"
                   disabled={!days[i].works}
                   value={days[i].end}
                   onChange={(e) => updateDay(i, { end: e.target.value })}
-                  className="rounded-lg border border-gray-300 px-2 py-1 text-sm disabled:opacity-40"
+                  className="rounded-lg border border-brand-dark/20 px-2 py-1 text-sm disabled:opacity-40"
                 />
               </div>
             ))}
           </div>
 
-          {message && <p className="mt-3 text-sm text-green-600">{message}</p>}
+          {message && <p className="mt-3 text-sm font-medium text-brand-navy">{message}</p>}
 
           <button
             onClick={handleSave}
             disabled={saving}
-            className="mt-4 rounded-lg bg-gray-900 px-4 py-2 text-sm font-medium text-white disabled:opacity-50"
+            className="mt-4 rounded-lg bg-brand-navy px-4 py-2 text-sm font-medium text-white hover:bg-brand-blue disabled:opacity-50"
           >
             {saving ? 'Guardando…' : 'Guardar horario'}
           </button>

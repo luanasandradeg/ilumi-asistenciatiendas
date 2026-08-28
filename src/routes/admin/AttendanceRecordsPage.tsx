@@ -80,15 +80,15 @@ export default function AttendanceRecordsPage() {
 
   return (
     <div>
-      <h2 className="mb-4 text-lg font-semibold text-gray-900">Registros de asistencia</h2>
+      <h2 className="mb-4 text-lg font-semibold text-brand-navy">Registros de asistencia</h2>
 
       <div className="mb-4 flex flex-wrap gap-3 rounded-2xl bg-white p-4 shadow-sm">
         <div>
-          <label className="mb-1 block text-xs font-medium text-gray-500">Empleado</label>
+          <label className="mb-1 block text-xs font-medium text-brand-dark/60">Empleado</label>
           <select
             value={employeeId}
             onChange={(e) => setEmployeeId(e.target.value)}
-            className="rounded-lg border border-gray-300 px-2 py-1.5 text-sm"
+            className="rounded-lg border border-brand-dark/20 px-2 py-1.5 text-sm focus:border-brand-navy focus:outline-none"
           >
             <option value="">Todos</option>
             {employees.map((e) => (
@@ -100,11 +100,11 @@ export default function AttendanceRecordsPage() {
         </div>
         {isAdmin && (
           <div>
-            <label className="mb-1 block text-xs font-medium text-gray-500">Local</label>
+            <label className="mb-1 block text-xs font-medium text-brand-dark/60">Local</label>
             <select
               value={storeId}
               onChange={(e) => setStoreId(e.target.value)}
-              className="rounded-lg border border-gray-300 px-2 py-1.5 text-sm"
+              className="rounded-lg border border-brand-dark/20 px-2 py-1.5 text-sm focus:border-brand-navy focus:outline-none"
             >
               <option value="">Todos</option>
               {stores.map((s) => (
@@ -116,32 +116,32 @@ export default function AttendanceRecordsPage() {
           </div>
         )}
         <div>
-          <label className="mb-1 block text-xs font-medium text-gray-500">Desde</label>
+          <label className="mb-1 block text-xs font-medium text-brand-dark/60">Desde</label>
           <input
             type="date"
             value={from}
             onChange={(e) => setFrom(e.target.value)}
-            className="rounded-lg border border-gray-300 px-2 py-1.5 text-sm"
+            className="rounded-lg border border-brand-dark/20 px-2 py-1.5 text-sm focus:border-brand-navy focus:outline-none"
           />
         </div>
         <div>
-          <label className="mb-1 block text-xs font-medium text-gray-500">Hasta</label>
+          <label className="mb-1 block text-xs font-medium text-brand-dark/60">Hasta</label>
           <input
             type="date"
             value={to}
             onChange={(e) => setTo(e.target.value)}
-            className="rounded-lg border border-gray-300 px-2 py-1.5 text-sm"
+            className="rounded-lg border border-brand-dark/20 px-2 py-1.5 text-sm focus:border-brand-navy focus:outline-none"
           />
         </div>
       </div>
 
       {loading ? (
-        <p className="text-sm text-gray-400">Cargando…</p>
+        <p className="text-sm text-brand-dark/50">Cargando…</p>
       ) : (
         <div className="overflow-x-auto rounded-2xl bg-white shadow-sm">
           <table className="w-full text-sm">
             <thead>
-              <tr className="border-b border-gray-100 text-left text-gray-500">
+              <tr className="border-b border-brand-dark/10 text-left text-brand-dark/60">
                 <th className="px-4 py-3">Empleado</th>
                 <th className="px-4 py-3">Local</th>
                 <th className="px-4 py-3">Tipo</th>
@@ -153,37 +153,37 @@ export default function AttendanceRecordsPage() {
             </thead>
             <tbody>
               {rows.map((r) => (
-                <tr key={r.id} className="border-b border-gray-50 last:border-0">
-                  <td className="px-4 py-3 font-medium text-gray-900">{r.profile?.full_name ?? '—'}</td>
-                  <td className="px-4 py-3 text-gray-600">{r.store?.name ?? '—'}</td>
-                  <td className="px-4 py-3 capitalize text-gray-600">{r.type}</td>
-                  <td className="px-4 py-3 text-gray-600">
+                <tr key={r.id} className="border-b border-brand-dark/5 last:border-0">
+                  <td className="px-4 py-3 font-medium text-brand-dark">{r.profile?.full_name ?? '—'}</td>
+                  <td className="px-4 py-3 text-brand-dark/70">{r.store?.name ?? '—'}</td>
+                  <td className="px-4 py-3 capitalize text-brand-dark/70">{r.type}</td>
+                  <td className="px-4 py-3 text-brand-dark/70">
                     {new Date(r.marked_at).toLocaleString('es', { dateStyle: 'short', timeStyle: 'short' })}
                   </td>
-                  <td className="px-4 py-3 text-gray-600">{r.expected_time?.slice(0, 5) ?? '—'}</td>
-                  <td className="px-4 py-3 text-gray-600">{formatVariance(r.variance_minutes)}</td>
+                  <td className="px-4 py-3 text-brand-dark/70">{r.expected_time?.slice(0, 5) ?? '—'}</td>
+                  <td className="px-4 py-3 text-brand-dark/70">{formatVariance(r.variance_minutes)}</td>
                   <td className="px-4 py-3">
                     {r.status ? (
                       <span
                         className={`rounded-full px-2 py-1 text-xs font-medium ${
                           r.status === 'on_time'
-                            ? 'bg-green-100 text-green-700'
+                            ? 'bg-brand-gold/20 text-brand-navy'
                             : r.status === 'late'
-                              ? 'bg-red-100 text-red-700'
-                              : 'bg-yellow-100 text-yellow-700'
+                              ? 'bg-black text-white'
+                              : 'bg-brand-blue/15 text-brand-blue'
                         }`}
                       >
                         {STATUS_LABEL[r.status]}
                       </span>
                     ) : (
-                      <span className="text-xs text-gray-400">sin horario</span>
+                      <span className="text-xs text-brand-dark/40">sin horario</span>
                     )}
                   </td>
                 </tr>
               ))}
               {rows.length === 0 && (
                 <tr>
-                  <td colSpan={7} className="px-4 py-6 text-center text-gray-400">
+                  <td colSpan={7} className="px-4 py-6 text-center text-brand-dark/40">
                     No hay registros para este filtro.
                   </td>
                 </tr>

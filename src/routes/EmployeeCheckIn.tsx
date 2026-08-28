@@ -100,23 +100,23 @@ export default function EmployeeCheckIn() {
 
   if (!store) {
     return (
-      <div className="flex min-h-dvh items-center justify-center px-4 text-center text-gray-600">
+      <div className="flex min-h-dvh items-center justify-center px-4 text-center text-brand-dark/70">
         Tu cuenta todavía no tiene un local asignado. Contacta a tu encargado.
       </div>
     )
   }
 
   return (
-    <div className="mx-auto min-h-dvh max-w-md bg-gray-50 px-4 pb-10 pt-6">
+    <div className="mx-auto min-h-dvh max-w-md bg-brand-navy/5 px-4 pb-10 pt-6">
       <div className="mb-4 flex items-center justify-between">
         <div>
-          <p className="text-sm text-gray-500">Hola,</p>
-          <h1 className="text-lg font-semibold text-gray-900">{profile.full_name}</h1>
-          <p className="text-xs text-gray-400">{store.name}</p>
+          <p className="text-sm text-brand-dark/60">Hola,</p>
+          <h1 className="text-lg font-semibold text-brand-navy">{profile.full_name}</h1>
+          <p className="text-xs text-brand-dark/50">{store.name}</p>
         </div>
         <button
           onClick={() => signOut()}
-          className="text-sm font-medium text-gray-500 underline"
+          className="text-sm font-medium text-brand-dark/60 underline"
         >
           Salir
         </button>
@@ -131,7 +131,7 @@ export default function EmployeeCheckIn() {
 
       <button
         onClick={locate}
-        className="mt-2 w-full text-center text-xs font-medium text-blue-600"
+        className="mt-2 w-full text-center text-xs font-medium text-brand-blue"
       >
         Actualizar ubicación
       </button>
@@ -140,24 +140,24 @@ export default function EmployeeCheckIn() {
         <button
           onClick={() => handleMark('entrada')}
           disabled={geoStatus !== 'in_range' || marking !== null}
-          className="rounded-2xl bg-green-600 py-5 text-base font-semibold text-white disabled:opacity-40"
+          className="rounded-2xl bg-brand-navy py-5 text-base font-semibold text-white disabled:opacity-40"
         >
           {marking === 'entrada' ? 'Marcando…' : 'Marcar entrada'}
         </button>
         <button
           onClick={() => handleMark('salida')}
           disabled={geoStatus !== 'in_range' || marking !== null}
-          className="rounded-2xl bg-gray-900 py-5 text-base font-semibold text-white disabled:opacity-40"
+          className="rounded-2xl bg-black py-5 text-base font-semibold text-white disabled:opacity-40"
         >
           {marking === 'salida' ? 'Marcando…' : 'Marcar salida'}
         </button>
       </div>
 
-      <h2 className="mb-2 mt-8 text-sm font-semibold text-gray-700">Últimas marcas</h2>
+      <h2 className="mb-2 mt-8 text-sm font-semibold text-brand-dark">Últimas marcas</h2>
       {loadingRecords ? (
-        <p className="text-sm text-gray-400">Cargando…</p>
+        <p className="text-sm text-brand-dark/50">Cargando…</p>
       ) : records.length === 0 ? (
-        <p className="text-sm text-gray-400">Todavía no marcaste asistencia.</p>
+        <p className="text-sm text-brand-dark/50">Todavía no marcaste asistencia.</p>
       ) : (
         <ul className="space-y-2">
           {records.map((r) => (
@@ -166,8 +166,8 @@ export default function EmployeeCheckIn() {
               className="flex items-center justify-between rounded-xl bg-white px-4 py-3 shadow-sm"
             >
               <div>
-                <p className="text-sm font-medium capitalize text-gray-900">{r.type}</p>
-                <p className="text-xs text-gray-500">
+                <p className="text-sm font-medium capitalize text-brand-dark">{r.type}</p>
+                <p className="text-xs text-brand-dark/60">
                   {new Date(r.marked_at).toLocaleString('es', {
                     dateStyle: 'short',
                     timeStyle: 'short',
@@ -175,10 +175,10 @@ export default function EmployeeCheckIn() {
                 </p>
               </div>
               <div className="text-right">
-                <p className="text-xs font-medium text-gray-700">
+                <p className="text-xs font-medium text-brand-dark/80">
                   {r.status ? STATUS_LABEL[r.status] : '—'}
                 </p>
-                <p className="text-xs text-gray-400">{formatVariance(r.variance_minutes)}</p>
+                <p className="text-xs text-brand-dark/50">{formatVariance(r.variance_minutes)}</p>
               </div>
             </li>
           ))}

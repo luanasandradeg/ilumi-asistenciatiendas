@@ -3,7 +3,7 @@ import { useAuth } from '../../contexts/AuthContext'
 
 const linkClass = ({ isActive }: { isActive: boolean }) =>
   `whitespace-nowrap rounded-full px-4 py-2 text-sm font-medium ${
-    isActive ? 'bg-gray-900 text-white' : 'bg-gray-100 text-gray-600'
+    isActive ? 'bg-brand-navy text-white' : 'bg-brand-dark/5 text-brand-dark/70'
   }`
 
 export default function AdminLayout() {
@@ -11,16 +11,16 @@ export default function AdminLayout() {
   const isAdmin = profile?.role === 'admin'
 
   return (
-    <div className="min-h-dvh bg-gray-50">
-      <header className="border-b border-gray-200 bg-white px-4 py-4">
+    <div className="min-h-dvh bg-brand-navy/5">
+      <header className="border-b border-brand-dark/10 bg-white px-4 py-4">
         <div className="mx-auto flex max-w-5xl items-center justify-between">
           <div>
-            <h1 className="text-lg font-semibold text-gray-900">Panel de asistencia</h1>
-            <p className="text-xs text-gray-500">
+            <h1 className="text-lg font-semibold text-brand-navy">Panel de asistencia</h1>
+            <p className="text-xs text-brand-dark/60">
               {profile?.full_name} · {isAdmin ? 'Administrador' : 'Encargado de local'}
             </p>
           </div>
-          <button onClick={() => signOut()} className="text-sm font-medium text-gray-500 underline">
+          <button onClick={() => signOut()} className="text-sm font-medium text-brand-dark/60 underline">
             Salir
           </button>
         </div>

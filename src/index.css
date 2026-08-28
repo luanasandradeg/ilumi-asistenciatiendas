@@ -1,5 +1,12 @@
 @import "tailwindcss";
 
+@theme {
+  --color-brand-navy: #26367c;
+  --color-brand-blue: #496cb2;
+  --color-brand-gold: #d4a827;
+  --color-brand-dark: #222222;
+}
+
 html {
   -webkit-tap-highlight-color: transparent;
 }

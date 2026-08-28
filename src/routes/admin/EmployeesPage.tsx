@@ -77,14 +77,14 @@ export default function EmployeesPage() {
   return (
     <div>
       <div className="mb-4 flex items-center justify-between">
-        <h2 className="text-lg font-semibold text-gray-900">Empleados</h2>
+        <h2 className="text-lg font-semibold text-brand-navy">Empleados</h2>
         {!creating && (
           <button
             onClick={() => {
               setCreating(true)
               setLastCreated(null)
             }}
-            className="rounded-lg bg-gray-900 px-4 py-2 text-sm font-medium text-white"
+            className="rounded-lg bg-brand-navy px-4 py-2 text-sm font-medium text-white hover:bg-brand-blue"
           >
             Nuevo empleado
           </button>
@@ -92,7 +92,7 @@ export default function EmployeesPage() {
       </div>
 
       {lastCreated && (
-        <div className="mb-4 rounded-xl bg-green-50 p-4 text-sm text-green-800">
+        <div className="mb-4 rounded-xl border border-brand-gold bg-brand-gold/10 p-4 text-sm text-brand-dark">
           Cuenta creada para <strong>{lastCreated.email}</strong>. Contraseña temporal:{' '}
           <strong>{lastCreated.temp_password}</strong> — compártela con el empleado, no se va a
           volver a mostrar.
@@ -103,40 +103,40 @@ export default function EmployeesPage() {
         <form onSubmit={handleCreate} className="mb-6 rounded-2xl bg-white p-4 shadow-sm">
           <div className="grid gap-3 sm:grid-cols-2">
             <div>
-              <label className="mb-1 block text-sm font-medium text-gray-700">Nombre completo</label>
+              <label className="mb-1 block text-sm font-medium text-brand-dark">Nombre completo</label>
               <input
                 required
                 value={form.full_name}
                 onChange={(e) => setForm({ ...form, full_name: e.target.value })}
-                className="w-full rounded-lg border border-gray-300 px-3 py-2"
+                className="w-full rounded-lg border border-brand-dark/20 px-3 py-2 focus:border-brand-navy focus:outline-none"
               />
             </div>
             <div>
-              <label className="mb-1 block text-sm font-medium text-gray-700">Email</label>
+              <label className="mb-1 block text-sm font-medium text-brand-dark">Email</label>
               <input
                 required
                 type="email"
                 value={form.email}
                 onChange={(e) => setForm({ ...form, email: e.target.value })}
-                className="w-full rounded-lg border border-gray-300 px-3 py-2"
+                className="w-full rounded-lg border border-brand-dark/20 px-3 py-2 focus:border-brand-navy focus:outline-none"
               />
             </div>
             <div>
-              <label className="mb-1 block text-sm font-medium text-gray-700">Código de empleado</label>
+              <label className="mb-1 block text-sm font-medium text-brand-dark">Código de empleado</label>
               <input
                 value={form.employee_code}
                 onChange={(e) => setForm({ ...form, employee_code: e.target.value })}
-                className="w-full rounded-lg border border-gray-300 px-3 py-2"
+                className="w-full rounded-lg border border-brand-dark/20 px-3 py-2 focus:border-brand-navy focus:outline-none"
               />
             </div>
             {isAdmin && (
               <div>
-                <label className="mb-1 block text-sm font-medium text-gray-700">Local</label>
+                <label className="mb-1 block text-sm font-medium text-brand-dark">Local</label>
                 <select
                   required
                   value={form.store_id}
                   onChange={(e) => setForm({ ...form, store_id: e.target.value })}
-                  className="w-full rounded-lg border border-gray-300 px-3 py-2"
+                  className="w-full rounded-lg border border-brand-dark/20 px-3 py-2 focus:border-brand-navy focus:outline-none"
                 >
                   <option value="">Seleccionar…</option>
                   {stores.map((s) => (
@@ -149,20 +149,20 @@ export default function EmployeesPage() {
             )}
           </div>
 
-          {error && <p className="mt-3 text-sm text-red-600">{error}</p>}
+          {error && <p className="mt-3 text-sm font-medium text-black">{error}</p>}
 
           <div className="mt-4 flex gap-2">
             <button
               type="submit"
               disabled={saving}
-              className="rounded-lg bg-gray-900 px-4 py-2 text-sm font-medium text-white disabled:opacity-50"
+              className="rounded-lg bg-brand-navy px-4 py-2 text-sm font-medium text-white hover:bg-brand-blue disabled:opacity-50"
             >
               {saving ? 'Creando…' : 'Crear cuenta'}
             </button>
             <button
               type="button"
               onClick={() => setCreating(false)}
-              className="rounded-lg bg-gray-100 px-4 py-2 text-sm font-medium text-gray-700"
+              className="rounded-lg bg-brand-dark/5 px-4 py-2 text-sm font-medium text-brand-dark"
             >
               Cancelar
             </button>
@@ -171,12 +171,12 @@ export default function EmployeesPage() {
       )}
 
       {loading ? (
-        <p className="text-sm text-gray-400">Cargando…</p>
+        <p className="text-sm text-brand-dark/50">Cargando…</p>
       ) : (
         <div className="overflow-x-auto rounded-2xl bg-white shadow-sm">
           <table className="w-full text-sm">
             <thead>
-              <tr className="border-b border-gray-100 text-left text-gray-500">
+              <tr className="border-b border-brand-dark/10 text-left text-brand-dark/60">
                 <th className="px-4 py-3">Nombre</th>
                 <th className="px-4 py-3">Código</th>
                 {isAdmin && <th className="px-4 py-3">Local</th>}
@@ -186,15 +186,15 @@ export default function EmployeesPage() {
             </thead>
             <tbody>
               {employees.map((emp) => (
-                <tr key={emp.id} className="border-b border-gray-50 last:border-0">
-                  <td className="px-4 py-3 font-medium text-gray-900">{emp.full_name}</td>
-                  <td className="px-4 py-3 text-gray-600">{emp.employee_code ?? '—'}</td>
+                <tr key={emp.id} className="border-b border-brand-dark/5 last:border-0">
+                  <td className="px-4 py-3 font-medium text-brand-dark">{emp.full_name}</td>
+                  <td className="px-4 py-3 text-brand-dark/70">{emp.employee_code ?? '—'}</td>
                   {isAdmin && (
                     <td className="px-4 py-3">
                       <select
                         value={emp.store_id ?? ''}
                         onChange={(e) => updateStore(emp, e.target.value)}
-                        className="rounded-lg border border-gray-300 px-2 py-1 text-sm"
+                        className="rounded-lg border border-brand-dark/20 px-2 py-1 text-sm"
                       >
                         {stores.map((s) => (
                           <option key={s.id} value={s.id}>
@@ -207,14 +207,14 @@ export default function EmployeesPage() {
                   <td className="px-4 py-3">
                     <span
                       className={`rounded-full px-2 py-1 text-xs font-medium ${
-                        emp.active ? 'bg-green-100 text-green-700' : 'bg-gray-100 text-gray-500'
+                        emp.active ? 'bg-brand-gold/20 text-brand-navy' : 'bg-brand-dark/10 text-brand-dark/60'
                       }`}
                     >
                       {emp.active ? 'Activo' : 'Inactivo'}
                     </span>
                   </td>
                   <td className="px-4 py-3 text-right">
-                    <button onClick={() => toggleActive(emp)} className="text-blue-600">
+                    <button onClick={() => toggleActive(emp)} className="text-brand-blue">
                       {emp.active ? 'Desactivar' : 'Reactivar'}
                     </button>
                   </td>
