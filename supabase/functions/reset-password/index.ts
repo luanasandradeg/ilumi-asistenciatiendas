@@ -76,6 +76,8 @@ Deno.serve(async (req) => {
     const { error: updateErr } = await admin.auth.admin.updateUserById(employee_id, { password })
     if (updateErr) return json({ error: updateErr.message }, 400)
 
+    await admin.from('profiles').update({ password_actual: password }).eq('id', employee_id)
+
     return json({ temp_password: password })
   } catch (err) {
     return json({ error: (err as Error).message }, 500)

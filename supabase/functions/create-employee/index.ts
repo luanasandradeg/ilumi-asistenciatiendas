@@ -8,6 +8,10 @@
 // Deploy: supabase functions deploy create-employee
 // Requiere los secrets SUPABASE_URL y SUPABASE_SERVICE_ROLE_KEY (Supabase
 // los inyecta automáticamente en runtime, no hace falta configurarlos a mano).
+//
+// También guarda una copia en texto plano de la contraseña en
+// profiles.password_actual, para poder consultarla desde el Table Editor
+// de Supabase. Trade-off de seguridad pedido explícitamente por el negocio.
 
 import { createClient } from 'https://esm.sh/@supabase/supabase-js@2'
 
@@ -116,6 +120,7 @@ Deno.serve(async (req) => {
       store_id,
       employee_code,
       active: true,
+      password_actual: password,
     })
 
     if (profileErr) {

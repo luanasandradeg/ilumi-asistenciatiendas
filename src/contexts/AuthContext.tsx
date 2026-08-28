@@ -23,7 +23,7 @@ const AuthContext = createContext<AuthContextValue | undefined>(undefined)
 async function fetchProfile(userId: string): Promise<ProfileWithStore | null> {
   const { data, error } = await supabase
     .from('profiles')
-    .select('*, store:stores(*)')
+    .select('id, full_name, role, store_id, employee_code, active, created_at, store:stores(*)')
     .eq('id', userId)
     .single()
 
@@ -31,7 +31,7 @@ async function fetchProfile(userId: string): Promise<ProfileWithStore | null> {
     console.error('Error cargando perfil:', error.message)
     return null
   }
-  return data as ProfileWithStore
+  return data as unknown as ProfileWithStore
 }
 
 export function AuthProvider({ children }: { children: ReactNode }) {

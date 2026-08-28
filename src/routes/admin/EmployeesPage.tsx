@@ -28,7 +28,11 @@ export default function EmployeesPage() {
   async function load() {
     setLoading(true)
     const [{ data: emps }, { data: sts }] = await Promise.all([
-      supabase.from('profiles').select('*').in('role', ['employee', 'manager']).order('full_name'),
+      supabase
+        .from('profiles')
+        .select('id, full_name, role, store_id, employee_code, active, created_at')
+        .in('role', ['employee', 'manager'])
+        .order('full_name'),
       supabase.from('stores').select('*').order('name'),
     ])
     if (emps) setEmployees(emps as Profile[])

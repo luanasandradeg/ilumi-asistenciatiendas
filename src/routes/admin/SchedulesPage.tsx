@@ -26,7 +26,7 @@ export default function SchedulesPage() {
   useEffect(() => {
     supabase
       .from('profiles')
-      .select('*')
+      .select('id, full_name, role, store_id, employee_code, active, created_at')
       .in('role', ['employee', 'manager'])
       .order('full_name')
       .then(({ data }) => {
