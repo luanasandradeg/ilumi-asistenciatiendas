@@ -22,6 +22,8 @@ export default function EmployeesPage() {
   const [saving, setSaving] = useState(false)
   const [error, setError] = useState<string | null>(null)
   const [lastCreated, setLastCreated] = useState<{ email: string; temp_password: string } | null>(null)
+  const [lastReset, setLastReset] = useState<{ full_name: string; temp_password: string } | null>(null)
+  const [resettingId, setResettingId] = useState<string | null>(null)
 
   async function load() {
     setLoading(true)
@@ -80,6 +82,25 @@ export default function EmployeesPage() {
     load()
   }
 
+  async function handleResetPassword(emp: Profile) {
+    setResettingId(emp.id)
+    setLastReset(null)
+    setLastCreated(null)
+    const { data, error } = await supabase.functions.invoke('reset-password', {
+      body: { employee_id: emp.id },
+    })
+    setResettingId(null)
+    if (error) {
+      setError(error.message)
+      return
+    }
+    if (data?.error) {
+      setError(data.error)
+      return
+    }
+    setLastReset({ full_name: emp.full_name, temp_password: data.temp_password })
+  }
+
   return (
     <div>
       <div className="mb-4 flex items-center justify-between">
@@ -102,6 +123,14 @@ export default function EmployeesPage() {
           Cuenta creada para <strong>{lastCreated.email}</strong>. Contraseña temporal:{' '}
           <strong>{lastCreated.temp_password}</strong> — compártela con el empleado, no se va a
           volver a mostrar.
+        </div>
+      )}
+
+      {lastReset && (
+        <div className="mb-4 rounded-xl border border-brand-gold bg-brand-gold/10 p-4 text-sm text-brand-dark">
+          Nueva contraseña temporal para <strong>{lastReset.full_name}</strong>:{' '}
+          <strong>{lastReset.temp_password}</strong> — compártela con la persona, no se va a volver
+          a mostrar.
         </div>
       )}
 
@@ -236,9 +265,18 @@ export default function EmployeesPage() {
                   </td>
                   <td className="px-4 py-3 text-right">
                     {(isAdmin || emp.role === 'employee') && (
-                      <button onClick={() => toggleActive(emp)} className="text-brand-blue">
-                        {emp.active ? 'Desactivar' : 'Reactivar'}
-                      </button>
+                      <div className="flex justify-end gap-3">
+                        <button
+                          onClick={() => handleResetPassword(emp)}
+                          disabled={resettingId === emp.id}
+                          className="text-brand-blue disabled:opacity-50"
+                        >
+                          {resettingId === emp.id ? 'Reseteando…' : 'Resetear contraseña'}
+                        </button>
+                        <button onClick={() => toggleActive(emp)} className="text-brand-blue">
+                          {emp.active ? 'Desactivar' : 'Reactivar'}
+                        </button>
+                      </div>
                     )}
                   </td>
                 </tr>
