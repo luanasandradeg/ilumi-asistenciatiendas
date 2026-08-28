@@ -13,7 +13,7 @@ export default function AdminLayout() {
   return (
     <div className="min-h-dvh bg-brand-navy/5">
       <header className="border-b border-brand-dark/10 bg-white px-4 py-4">
-        <div className="mx-auto flex max-w-5xl items-center justify-between">
+        <div className="mx-auto flex max-w-7xl items-center justify-between">
           <div>
             <h1 className="text-lg font-semibold text-brand-navy">Panel de asistencia</h1>
             <p className="text-xs text-brand-dark/60">
@@ -27,7 +27,7 @@ export default function AdminLayout() {
             Cerrar sesión
           </button>
         </div>
-        <nav className="mx-auto mt-4 flex max-w-5xl gap-2 overflow-x-auto">
+        <nav className="mx-auto mt-4 flex max-w-7xl gap-2 overflow-x-auto">
           {!isAdmin && (
             <NavLink to="/admin/asistencia" className={linkClass}>
               Marcar asistencia
@@ -49,7 +49,7 @@ export default function AdminLayout() {
           </NavLink>
         </nav>
       </header>
-      <main className="mx-auto max-w-5xl px-4 py-6">
+      <main className="mx-auto max-w-7xl px-4 py-6">
         <Outlet />
       </main>
     </div>
