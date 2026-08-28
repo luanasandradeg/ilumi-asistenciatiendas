@@ -85,5 +85,5 @@ npm run dev
 - Tolerancia de horario: se considera "a horario" una diferencia de hasta 5 minutos.
   Ajustable en `supabase/migrations/0003_mark_attendance.sql`.
 - Cada local tiene su propia zona horaria (`stores.timezone`, default
-  `America/Santiago`) para calcular correctamente el día de la semana y el horario
+  `America/Lima`) para calcular correctamente el día de la semana y el horario
   esperado.

@@ -20,7 +20,10 @@ export default function AdminLayout() {
               {profile?.full_name} · {isAdmin ? 'Administrador' : 'Líder'}
             </p>
           </div>
-          <button onClick={() => signOut()} className="text-sm font-medium text-brand-dark/60 underline">
+          <button
+            onClick={() => signOut()}
+            className="rounded-lg bg-brand-dark/5 px-3 py-1.5 text-sm font-medium text-brand-dark hover:bg-brand-dark/10"
+          >
             Cerrar sesión
           </button>
         </div>
@@ -31,7 +34,7 @@ export default function AdminLayout() {
             </NavLink>
           )}
           <NavLink to="/admin/empleados" className={linkClass}>
-            Empleados
+            Usuarios
           </NavLink>
           {isAdmin && (
             <NavLink to="/admin/locales" className={linkClass}>

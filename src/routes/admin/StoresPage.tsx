@@ -22,7 +22,7 @@ const emptyForm = {
   latitude: '',
   longitude: '',
   radius_meters: '50',
-  timezone: 'America/Santiago',
+  timezone: 'America/Lima',
 }
 
 export default function StoresPage() {
@@ -88,7 +88,7 @@ export default function StoresPage() {
       latitude: Number(form.latitude),
       longitude: Number(form.longitude),
       radius_meters: Number(form.radius_meters),
-      timezone: form.timezone.trim() || 'America/Santiago',
+      timezone: form.timezone.trim() || 'America/Lima',
     }
 
     const { error } = form.id
@@ -192,7 +192,7 @@ export default function StoresPage() {
             type="button"
             onClick={useMyLocation}
             disabled={locating}
-            className="mt-3 text-sm font-medium text-brand-blue disabled:opacity-50"
+            className="mt-3 rounded-lg bg-brand-blue/10 px-3 py-1.5 text-sm font-medium text-brand-blue hover:bg-brand-blue/20 disabled:opacity-50"
           >
             {locating ? 'Obteniendo ubicación…' : 'Usar mi ubicación actual'}
           </button>
@@ -210,7 +210,7 @@ export default function StoresPage() {
             <button
               type="button"
               onClick={() => setEditing(false)}
-              className="rounded-lg bg-brand-dark/5 px-4 py-2 text-sm font-medium text-brand-dark"
+              className="rounded-lg bg-brand-dark/5 px-4 py-2 text-sm font-medium text-brand-dark hover:bg-brand-dark/10"
             >
               Cancelar
             </button>
@@ -240,7 +240,10 @@ export default function StoresPage() {
                   <td className="px-4 py-3 text-brand-dark/70">{s.radius_meters} m</td>
                   <td className="px-4 py-3 text-brand-dark/70">{s.timezone}</td>
                   <td className="px-4 py-3 text-right">
-                    <button onClick={() => startEdit(s)} className="text-brand-blue">
+                    <button
+                      onClick={() => startEdit(s)}
+                      className="rounded-lg bg-brand-blue/10 px-3 py-1.5 text-sm font-medium text-brand-blue hover:bg-brand-blue/20"
+                    >
                       Editar
                     </button>
                   </td>

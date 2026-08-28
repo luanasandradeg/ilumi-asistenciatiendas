@@ -117,7 +117,7 @@ export function CheckInPanel() {
 
       <button
         onClick={locate}
-        className="mt-2 w-full text-center text-xs font-medium text-brand-blue"
+        className="mt-2 w-full rounded-lg bg-brand-blue/10 py-1.5 text-center text-xs font-medium text-brand-blue hover:bg-brand-blue/20"
       >
         Actualizar ubicación
       </button>

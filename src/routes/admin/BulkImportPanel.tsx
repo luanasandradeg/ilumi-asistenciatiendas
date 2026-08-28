@@ -12,15 +12,15 @@ interface ResultRow {
   temp_password?: string
 }
 
-const TEMPLATE_HEADERS = ['nombre_completo', 'email', 'codigo_empleado', 'rol', 'local']
+const TEMPLATE_HEADERS = ['nombre_completo', 'email', 'codigo_usuario', 'rol', 'local']
 const TEMPLATE_EXAMPLE = [
-  ['Juan Pérez', 'juan.perez@ejemplo.com', 'EMP001', 'empleado', 'Sucursal Centro'],
-  ['Maria Gomez', 'maria.gomez@ejemplo.com', 'LID001', 'lider', 'Sucursal Norte'],
+  ['Juan Pérez', 'juan.perez@ejemplo.com', 'USR001', 'asesor', 'Sucursal Centro'],
+  ['Maria Gomez', 'maria.gomez@ejemplo.com', 'USR002', 'lider', 'Sucursal Norte'],
 ]
 
 function normalizeRole(raw: string): 'employee' | 'manager' | null {
   const v = raw.trim().toLowerCase()
-  if (v === '' || v === 'empleado') return 'employee'
+  if (v === '' || v === 'asesor' || v === 'empleado') return 'employee'
   if (v === 'lider' || v === 'líder') return 'manager'
   return null
 }
@@ -39,7 +39,7 @@ export function BulkImportPanel({ stores, isAdmin, onDone }: Props) {
   const [topError, setTopError] = useState<string | null>(null)
 
   function downloadTemplate() {
-    downloadCsv('plantilla_empleados.csv', toCsv(TEMPLATE_HEADERS, TEMPLATE_EXAMPLE))
+    downloadCsv('plantilla_usuarios.csv', toCsv(TEMPLATE_HEADERS, TEMPLATE_EXAMPLE))
   }
 
   async function handleFile(file: File) {
@@ -57,7 +57,7 @@ export function BulkImportPanel({ stores, isAdmin, onDone }: Props) {
     const idx = {
       nombre: header.indexOf('nombre_completo'),
       email: header.indexOf('email'),
-      codigo: header.indexOf('codigo_empleado'),
+      codigo: header.indexOf('codigo_usuario') !== -1 ? header.indexOf('codigo_usuario') : header.indexOf('codigo_empleado'),
       rol: header.indexOf('rol'),
       local: header.indexOf('local'),
     }
@@ -168,8 +168,11 @@ export function BulkImportPanel({ stores, isAdmin, onDone }: Props) {
 
   return (
     <div className="mb-6 rounded-2xl bg-white p-4 shadow-sm">
-      <button onClick={() => setOpen((v) => !v)} className="text-sm font-medium text-brand-navy">
-        {open ? '▾' : '▸'} Carga masiva de empleados/líderes
+      <button
+        onClick={() => setOpen((v) => !v)}
+        className="rounded-lg bg-brand-navy/10 px-3 py-1.5 text-sm font-medium text-brand-navy hover:bg-brand-navy/20"
+      >
+        {open ? '▾' : '▸'} Carga masiva de usuarios (asesores y líderes)
       </button>
 
       {open && (
@@ -181,7 +184,7 @@ export function BulkImportPanel({ stores, isAdmin, onDone }: Props) {
           <div className="flex flex-wrap items-center gap-3">
             <button
               onClick={downloadTemplate}
-              className="rounded-lg bg-brand-dark/5 px-3 py-1.5 text-sm font-medium text-brand-dark"
+              className="rounded-lg bg-brand-dark/5 px-3 py-1.5 text-sm font-medium text-brand-dark hover:bg-brand-dark/10"
             >
               Descargar plantilla
             </button>

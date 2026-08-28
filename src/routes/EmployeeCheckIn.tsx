@@ -16,7 +16,7 @@ export default function EmployeeCheckIn() {
         </div>
         <button
           onClick={() => signOut()}
-          className="text-sm font-medium text-brand-dark/60 underline"
+          className="rounded-lg bg-brand-dark/5 px-3 py-1.5 text-sm font-medium text-brand-dark hover:bg-brand-dark/10"
         >
           Cerrar sesión
         </button>

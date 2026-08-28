@@ -7,10 +7,13 @@ import type { Profile, Store } from '../../types/database'
 const emptyForm = { email: '', full_name: '', employee_code: '', store_id: '', role: 'employee' }
 
 const ROLE_LABEL: Record<string, string> = {
-  employee: 'Empleado',
+  employee: 'Asesor',
   manager: 'Líder',
   admin: 'Administrador',
 }
+
+const secondaryButton =
+  'rounded-lg bg-brand-blue/10 px-3 py-1.5 text-sm font-medium text-brand-blue hover:bg-brand-blue/20'
 
 export default function EmployeesPage() {
   const { profile } = useAuth()
@@ -29,6 +32,7 @@ export default function EmployeesPage() {
   const [resetTarget, setResetTarget] = useState<Profile | null>(null)
   const [customPassword, setCustomPassword] = useState('')
   const [resetError, setResetError] = useState<string | null>(null)
+  const [detailTarget, setDetailTarget] = useState<Profile | null>(null)
 
   async function load() {
     setLoading(true)
@@ -125,10 +129,12 @@ export default function EmployeesPage() {
     setResetTarget(null)
   }
 
+  const detailStore = detailTarget?.store_id ? stores.find((s) => s.id === detailTarget.store_id) : null
+
   return (
     <div>
       <div className="mb-4 flex items-center justify-between">
-        <h2 className="text-lg font-semibold text-brand-navy">Empleados</h2>
+        <h2 className="text-lg font-semibold text-brand-navy">Usuarios</h2>
         {!creating && (
           <button
             onClick={() => {
@@ -137,7 +143,7 @@ export default function EmployeesPage() {
             }}
             className="rounded-lg bg-brand-navy px-4 py-2 text-sm font-medium text-white hover:bg-brand-blue"
           >
-            Nuevo empleado
+            Nuevo usuario
           </button>
         )}
       </div>
@@ -145,7 +151,7 @@ export default function EmployeesPage() {
       {lastCreated && (
         <div className="mb-4 rounded-xl border border-brand-gold bg-brand-gold/10 p-4 text-sm text-brand-dark">
           Cuenta creada para <strong>{lastCreated.email}</strong>. Contraseña temporal:{' '}
-          <strong>{lastCreated.temp_password}</strong> — compártela con el empleado, no se va a
+          <strong>{lastCreated.temp_password}</strong> — compártela con el usuario, no se va a
           volver a mostrar.
         </div>
       )}
@@ -181,7 +187,7 @@ export default function EmployeesPage() {
               />
             </div>
             <div>
-              <label className="mb-1 block text-sm font-medium text-brand-dark">Código de empleado</label>
+              <label className="mb-1 block text-sm font-medium text-brand-dark">Código de usuario</label>
               <input
                 value={form.employee_code}
                 onChange={(e) => setForm({ ...form, employee_code: e.target.value })}
@@ -196,7 +202,7 @@ export default function EmployeesPage() {
                   onChange={(e) => setForm({ ...form, role: e.target.value, store_id: '' })}
                   className="w-full rounded-lg border border-brand-dark/20 px-3 py-2 focus:border-brand-navy focus:outline-none"
                 >
-                  <option value="employee">Empleado</option>
+                  <option value="employee">Asesor</option>
                   <option value="manager">Líder</option>
                   <option value="admin">Administrador</option>
                 </select>
@@ -235,7 +241,7 @@ export default function EmployeesPage() {
             <button
               type="button"
               onClick={() => setCreating(false)}
-              className="rounded-lg bg-brand-dark/5 px-4 py-2 text-sm font-medium text-brand-dark"
+              className="rounded-lg bg-brand-dark/5 px-4 py-2 text-sm font-medium text-brand-dark hover:bg-brand-dark/10"
             >
               Cancelar
             </button>
@@ -296,21 +302,28 @@ export default function EmployeesPage() {
                       </span>
                     </td>
                     <td className="px-4 py-3 text-right">
-                      {(isAdmin || emp.role === 'employee') && (
-                        <div className="flex justify-end gap-3">
-                          {emp.role !== 'admin' && (
-                            <button
-                              onClick={() => (resetTarget?.id === emp.id ? setResetTarget(null) : openReset(emp))}
-                              className="text-brand-blue"
-                            >
-                              Resetear contraseña
+                      <div className="flex flex-wrap justify-end gap-2">
+                        <button onClick={() => setDetailTarget(emp)} className={secondaryButton}>
+                          Ver detalle
+                        </button>
+                        {(isAdmin || emp.role === 'employee') && (
+                          <>
+                            {emp.role !== 'admin' && (
+                              <button
+                                onClick={() =>
+                                  resetTarget?.id === emp.id ? setResetTarget(null) : openReset(emp)
+                                }
+                                className={secondaryButton}
+                              >
+                                Resetear contraseña
+                              </button>
+                            )}
+                            <button onClick={() => toggleActive(emp)} className={secondaryButton}>
+                              {emp.active ? 'Desactivar' : 'Reactivar'}
                             </button>
-                          )}
-                          <button onClick={() => toggleActive(emp)} className="text-brand-blue">
-                            {emp.active ? 'Desactivar' : 'Reactivar'}
-                          </button>
-                        </div>
-                      )}
+                          </>
+                        )}
+                      </div>
                     </td>
                   </tr>
                   {resetTarget?.id === emp.id && (
@@ -334,13 +347,13 @@ export default function EmployeesPage() {
                           <button
                             onClick={() => confirmReset(emp, false)}
                             disabled={resettingId === emp.id}
-                            className="rounded-lg bg-brand-dark/5 px-3 py-1.5 text-sm font-medium text-brand-dark disabled:opacity-50"
+                            className="rounded-lg bg-brand-dark/5 px-3 py-1.5 text-sm font-medium text-brand-dark hover:bg-brand-dark/10 disabled:opacity-50"
                           >
                             {resettingId === emp.id ? 'Generando…' : 'Generar automática'}
                           </button>
                           <button
                             onClick={() => setResetTarget(null)}
-                            className="text-sm font-medium text-brand-dark/60"
+                            className="rounded-lg bg-brand-dark/5 px-3 py-1.5 text-sm font-medium text-brand-dark hover:bg-brand-dark/10"
                           >
                             Cancelar
                           </button>
@@ -353,6 +366,58 @@ export default function EmployeesPage() {
               ))}
             </tbody>
           </table>
+        </div>
+      )}
+
+      {detailTarget && (
+        <div
+          className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 px-4"
+          onClick={() => setDetailTarget(null)}
+        >
+          <div
+            className="w-full max-w-sm rounded-2xl bg-white p-6 shadow-sm"
+            onClick={(e) => e.stopPropagation()}
+          >
+            <h3 className="mb-4 text-lg font-semibold text-brand-navy">Detalle del usuario</h3>
+            <dl className="space-y-3 text-sm">
+              <div>
+                <dt className="text-brand-dark/50">Nombre completo</dt>
+                <dd className="font-medium text-brand-dark">{detailTarget.full_name}</dd>
+              </div>
+              <div>
+                <dt className="text-brand-dark/50">Rol</dt>
+                <dd className="font-medium text-brand-dark">
+                  {ROLE_LABEL[detailTarget.role] ?? detailTarget.role}
+                </dd>
+              </div>
+              <div>
+                <dt className="text-brand-dark/50">Código de usuario</dt>
+                <dd className="font-medium text-brand-dark">{detailTarget.employee_code ?? '—'}</dd>
+              </div>
+              <div>
+                <dt className="text-brand-dark/50">Local</dt>
+                <dd className="font-medium text-brand-dark">{detailStore?.name ?? 'Sin local asignado'}</dd>
+              </div>
+              <div>
+                <dt className="text-brand-dark/50">Estado</dt>
+                <dd className="font-medium text-brand-dark">{detailTarget.active ? 'Activo' : 'Inactivo'}</dd>
+              </div>
+              <div>
+                <dt className="text-brand-dark/50">Fecha de alta</dt>
+                <dd className="font-medium text-brand-dark">
+                  {new Date(detailTarget.created_at).toLocaleDateString('es', {
+                    dateStyle: 'long',
+                  })}
+                </dd>
+              </div>
+            </dl>
+            <button
+              onClick={() => setDetailTarget(null)}
+              className="mt-5 w-full rounded-lg bg-brand-dark/5 px-4 py-2 text-sm font-medium text-brand-dark hover:bg-brand-dark/10"
+            >
+              Cerrar
+            </button>
+          </div>
         </div>
       )}
     </div>
