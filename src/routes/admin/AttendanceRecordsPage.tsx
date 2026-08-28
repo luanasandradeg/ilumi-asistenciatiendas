@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react'
 import { supabase } from '../../lib/supabaseClient'
 import { useAuth } from '../../contexts/AuthContext'
+import { downloadCsv, toCsv } from '../../utils/csv'
 import type { Profile, Store } from '../../types/database'
 
 interface Row {
@@ -40,6 +41,40 @@ export default function AttendanceRecordsPage() {
   const [to, setTo] = useState('')
   const [rows, setRows] = useState<Row[]>([])
   const [loading, setLoading] = useState(true)
+  const [exporting, setExporting] = useState(false)
+
+  function buildQuery() {
+    let query = supabase
+      .from('attendance_records')
+      .select('*, profile:profiles(full_name), store:stores(name)')
+      .order('marked_at', { ascending: false })
+
+    if (employeeId) query = query.eq('employee_id', employeeId)
+    if (isAdmin && storeId) query = query.eq('store_id', storeId)
+    if (from) query = query.gte('marked_at', `${from}T00:00:00`)
+    if (to) query = query.lte('marked_at', `${to}T23:59:59`)
+
+    return query
+  }
+
+  async function exportCsv() {
+    setExporting(true)
+    const { data, error } = await buildQuery()
+    setExporting(false)
+    if (error || !data) return
+
+    const headers = ['Empleado', 'Local', 'Tipo', 'Marcado', 'Esperado', 'Variación (min)', 'Estado']
+    const csvRows = (data as unknown as Row[]).map((r) => [
+      r.profile?.full_name ?? '',
+      r.store?.name ?? '',
+      r.type,
+      new Date(r.marked_at).toLocaleString('es'),
+      r.expected_time?.slice(0, 5) ?? '',
+      r.variance_minutes != null ? Math.round(r.variance_minutes) : '',
+      r.status ? STATUS_LABEL[r.status] : '',
+    ])
+    downloadCsv(`registros_asistencia_${new Date().toISOString().slice(0, 10)}.csv`, toCsv(headers, csvRows))
+  }
 
   useEffect(() => {
     supabase
@@ -57,18 +92,7 @@ export default function AttendanceRecordsPage() {
 
   async function load() {
     setLoading(true)
-    let query = supabase
-      .from('attendance_records')
-      .select('*, profile:profiles(full_name), store:stores(name)')
-      .order('marked_at', { ascending: false })
-      .limit(200)
-
-    if (employeeId) query = query.eq('employee_id', employeeId)
-    if (isAdmin && storeId) query = query.eq('store_id', storeId)
-    if (from) query = query.gte('marked_at', `${from}T00:00:00`)
-    if (to) query = query.lte('marked_at', `${to}T23:59:59`)
-
-    const { data, error } = await query
+    const { data, error } = await buildQuery().limit(200)
     if (!error && data) setRows(data as unknown as Row[])
     setLoading(false)
   }
@@ -80,7 +104,16 @@ export default function AttendanceRecordsPage() {
 
   return (
     <div>
-      <h2 className="mb-4 text-lg font-semibold text-brand-navy">Registros de asistencia</h2>
+      <div className="mb-4 flex items-center justify-between">
+        <h2 className="text-lg font-semibold text-brand-navy">Registros de asistencia</h2>
+        <button
+          onClick={exportCsv}
+          disabled={exporting}
+          className="rounded-lg bg-brand-navy px-4 py-2 text-sm font-medium text-white hover:bg-brand-blue disabled:opacity-50"
+        >
+          {exporting ? 'Exportando…' : 'Exportar CSV'}
+        </button>
+      </div>
 
       <div className="mb-4 flex flex-wrap gap-3 rounded-2xl bg-white p-4 shadow-sm">
         <div>

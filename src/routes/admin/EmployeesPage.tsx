@@ -1,6 +1,7 @@
 import { Fragment, FormEvent, useEffect, useState } from 'react'
 import { supabase } from '../../lib/supabaseClient'
 import { useAuth } from '../../contexts/AuthContext'
+import { BulkImportPanel } from './BulkImportPanel'
 import type { Profile, Store } from '../../types/database'
 
 const emptyForm = { email: '', full_name: '', employee_code: '', store_id: '', role: 'employee' }
@@ -242,6 +243,8 @@ export default function EmployeesPage() {
         </form>
       )}
 
+      <BulkImportPanel stores={stores} isAdmin={isAdmin} onDone={load} />
+
       {loading ? (
         <p className="text-sm text-brand-dark/50">Cargando…</p>
       ) : (
@@ -295,12 +298,14 @@ export default function EmployeesPage() {
                     <td className="px-4 py-3 text-right">
                       {(isAdmin || emp.role === 'employee') && (
                         <div className="flex justify-end gap-3">
-                          <button
-                            onClick={() => (resetTarget?.id === emp.id ? setResetTarget(null) : openReset(emp))}
-                            className="text-brand-blue"
-                          >
-                            Resetear contraseña
-                          </button>
+                          {emp.role !== 'admin' && (
+                            <button
+                              onClick={() => (resetTarget?.id === emp.id ? setResetTarget(null) : openReset(emp))}
+                              className="text-brand-blue"
+                            >
+                              Resetear contraseña
+                            </button>
+                          )}
                           <button onClick={() => toggleActive(emp)} className="text-brand-blue">
                             {emp.active ? 'Desactivar' : 'Reactivar'}
                           </button>
