@@ -166,90 +166,111 @@ export function BulkImportPanel({ stores, isAdmin, onDone }: Props) {
   const skipped = results?.filter((r) => r.status === 'skipped').length ?? 0
   const failed = results?.filter((r) => r.status === 'error').length ?? 0
 
+  function close() {
+    if (processing) return
+    setOpen(false)
+  }
+
   return (
-    <div className="mb-6 rounded-2xl bg-white p-4 shadow-sm">
+    <>
       <button
-        onClick={() => setOpen((v) => !v)}
-        className="rounded-lg bg-brand-navy/10 px-3 py-1.5 text-sm font-medium text-brand-navy hover:bg-brand-navy/20"
+        onClick={() => setOpen(true)}
+        className="mb-6 rounded-lg bg-brand-navy/10 px-3 py-1.5 text-sm font-medium text-brand-navy hover:bg-brand-navy/20"
       >
-        {open ? '▾' : '▸'} Carga masiva de usuarios (asesores y líderes)
+        Carga masiva de usuarios (asesores y líderes)
       </button>
 
       {open && (
-        <div className="mt-3">
-          <p className="mb-3 text-sm text-brand-dark/70">
-            Subí un CSV con varias cuentas a la vez. Las filas cuyo email ya exista en el sistema se
-            omiten — nunca se sobrescribe una cuenta existente.
-          </p>
-          <div className="flex flex-wrap items-center gap-3">
-            <button
-              onClick={downloadTemplate}
-              className="rounded-lg bg-brand-dark/5 px-3 py-1.5 text-sm font-medium text-brand-dark hover:bg-brand-dark/10"
-            >
-              Descargar plantilla
-            </button>
-            <input
-              type="file"
-              accept=".csv"
-              onChange={(e) => {
-                const file = e.target.files?.[0]
-                if (file) handleFile(file)
-                e.target.value = ''
-              }}
-              disabled={processing}
-              className="text-sm text-brand-dark/70"
-            />
-          </div>
-
-          {processing && (
-            <p className="mt-3 text-sm text-brand-dark/60">
-              Procesando {progress.done} de {progress.total}…
-            </p>
-          )}
-
-          {topError && <p className="mt-3 text-sm font-medium text-black">{topError}</p>}
-
-          {results && (
-            <div className="mt-4">
-              <p className="mb-2 text-sm font-medium text-brand-dark">
-                {created} creados · {skipped} omitidos (ya existían) · {failed} con error
-              </p>
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 px-4" onClick={close}>
+          <div
+            className="max-h-[85vh] w-full max-w-2xl overflow-y-auto rounded-2xl bg-white p-6 shadow-sm"
+            onClick={(e) => e.stopPropagation()}
+          >
+            <div className="mb-4 flex items-start justify-between">
+              <h3 className="text-lg font-semibold text-brand-navy">Carga masiva de usuarios</h3>
               <button
-                onClick={downloadResults}
-                className="mb-3 rounded-lg bg-brand-navy px-3 py-1.5 text-sm font-medium text-white hover:bg-brand-blue"
+                onClick={close}
+                disabled={processing}
+                className="rounded-lg bg-brand-dark/5 px-3 py-1.5 text-sm font-medium text-brand-dark hover:bg-brand-dark/10 disabled:opacity-50"
               >
-                Descargar resultado (incluye contraseñas)
+                Cerrar
               </button>
-              <div className="max-h-64 overflow-y-auto rounded-lg border border-brand-dark/10">
-                <table className="w-full text-xs">
-                  <thead>
-                    <tr className="border-b border-brand-dark/10 bg-brand-dark/5 text-left text-brand-dark/60">
-                      <th className="px-3 py-2">Fila</th>
-                      <th className="px-3 py-2">Nombre</th>
-                      <th className="px-3 py-2">Email</th>
-                      <th className="px-3 py-2">Resultado</th>
-                    </tr>
-                  </thead>
-                  <tbody>
-                    {results.map((r) => (
-                      <tr key={r.row} className="border-b border-brand-dark/5 last:border-0">
-                        <td className="px-3 py-2">{r.row}</td>
-                        <td className="px-3 py-2">{r.full_name}</td>
-                        <td className="px-3 py-2">{r.email}</td>
-                        <td className="px-3 py-2">
-                          {r.status === 'created' && <span className="text-brand-navy">Creado</span>}
-                          {r.status === 'skipped' && <span className="text-brand-blue">Omitido</span>}
-                          {r.status === 'error' && <span className="text-black">{r.message}</span>}
-                        </td>
-                      </tr>
-                    ))}
-                  </tbody>
-                </table>
-              </div>
             </div>
-          )}
+
+            <p className="mb-3 text-sm text-brand-dark/70">
+              Subí un CSV con varias cuentas a la vez. Las filas cuyo email ya exista en el sistema se
+              omiten — nunca se sobrescribe una cuenta existente.
+            </p>
+            <div className="flex flex-wrap items-center gap-3">
+              <button
+                onClick={downloadTemplate}
+                className="rounded-lg bg-brand-dark/5 px-3 py-1.5 text-sm font-medium text-brand-dark hover:bg-brand-dark/10"
+              >
+                Descargar plantilla
+              </button>
+              <input
+                type="file"
+                accept=".csv"
+                onChange={(e) => {
+                  const file = e.target.files?.[0]
+                  if (file) handleFile(file)
+                  e.target.value = ''
+                }}
+                disabled={processing}
+                className="text-sm text-brand-dark/70"
+              />
+            </div>
+
+            {processing && (
+              <p className="mt-3 text-sm text-brand-dark/60">
+                Procesando {progress.done} de {progress.total}…
+              </p>
+            )}
+
+            {topError && <p className="mt-3 text-sm font-medium text-black">{topError}</p>}
+
+            {results && (
+              <div className="mt-4">
+                <p className="mb-2 text-sm font-medium text-brand-dark">
+                  {created} creados · {skipped} omitidos (ya existían) · {failed} con error
+                </p>
+                <button
+                  onClick={downloadResults}
+                  className="mb-3 rounded-lg bg-brand-navy px-3 py-1.5 text-sm font-medium text-white hover:bg-brand-blue"
+                >
+                  Descargar resultado (incluye contraseñas)
+                </button>
+                <div className="max-h-64 overflow-y-auto rounded-lg border border-brand-dark/10">
+                  <table className="w-full text-xs">
+                    <thead>
+                      <tr className="border-b border-brand-dark/10 bg-brand-dark/5 text-left text-brand-dark/60">
+                        <th className="px-3 py-2">Fila</th>
+                        <th className="px-3 py-2">Nombre</th>
+                        <th className="px-3 py-2">Email</th>
+                        <th className="px-3 py-2">Resultado</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      {results.map((r) => (
+                        <tr key={r.row} className="border-b border-brand-dark/5 last:border-0">
+                          <td className="px-3 py-2">{r.row}</td>
+                          <td className="px-3 py-2">{r.full_name}</td>
+                          <td className="px-3 py-2">{r.email}</td>
+                          <td className="px-3 py-2">
+                            {r.status === 'created' && <span className="text-brand-navy">Creado</span>}
+                            {r.status === 'skipped' && <span className="text-brand-blue">Omitido</span>}
+                            {r.status === 'error' && <span className="text-black">{r.message}</span>}
+                          </td>
+                        </tr>
+                      ))}
+                    </tbody>
+                  </table>
+                </div>
+              </div>
+            )}
+          </div>
         </div>
       )}
-    </div>
+    </>
   )
 }
