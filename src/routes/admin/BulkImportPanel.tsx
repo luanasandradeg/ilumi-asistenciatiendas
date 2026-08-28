@@ -241,7 +241,7 @@ export function BulkImportPanel({ stores, isAdmin, onDone }: Props) {
                   Descargar resultado (incluye contraseñas)
                 </button>
                 <div className="max-h-64 overflow-y-auto rounded-lg border border-brand-dark/10">
-                  <table className="w-full text-xs">
+                  <table className="w-full whitespace-nowrap text-xs">
                     <thead>
                       <tr className="border-b border-brand-dark/10 bg-brand-dark/5 text-left text-brand-dark/60">
                         <th className="px-3 py-2">Fila</th>

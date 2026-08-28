@@ -222,7 +222,7 @@ export default function StoresPage() {
         <p className="text-sm text-brand-dark/50">Cargando…</p>
       ) : (
         <div className="overflow-x-auto rounded-2xl bg-white shadow-sm">
-          <table className="w-full text-sm">
+          <table className="w-full whitespace-nowrap text-sm">
             <thead>
               <tr className="border-b border-brand-dark/10 text-left text-brand-dark/60">
                 <th className="px-4 py-3">Nombre</th>
